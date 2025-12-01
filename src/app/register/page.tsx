@@ -11,7 +11,7 @@ export default function RegisterPage() {
       title="Create an Account"
       description="Sign up to start borrowing books from the library."
     >
-      <form className="space-y-4">
+      <form className="space-y-4" action="/app">
         <div className="space-y-2">
           <Label htmlFor="name">Full Name</Label>
           <Input id="name" type="text" placeholder="John Doe" required />
