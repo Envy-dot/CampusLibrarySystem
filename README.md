@@ -38,6 +38,7 @@ A minimal Next.js (app router) starter configured to work well with Firebase. In
 - Local environment variables can go in `.env.local`. Do not commit secrets. Secrets will not be committed!
 - Loft Music by The Weeknd is goated 😭
 - If using Firebase services, set your Firebase credentials and project ID in env vars or the Firebase config file.
+- NOTE: ALL DATA ON THE SYSTEM ARE MOCK DATA WITHOUT A LINKED DATABASE. LINK YOUR DATABASE AND REMOVE THE [text](src/lib/data.ts) FILE
 
 
 
