@@ -11,10 +11,10 @@ export default function LoginPage() {
       title="Student Login"
       description="Enter your credentials to access your account."
     >
-      <form className="space-y-4">
+      <form className="space-y-4" action="/app">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="m@example.com" required />
+          <Input id="email" type="email" defaultValue="duruarinze2006@gmail.com" required />
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
@@ -23,7 +23,7 @@ export default function LoginPage() {
               Forgot password?
             </Link>
           </div>
-          <Input id="password" type="password" required />
+          <Input id="password" type="password" defaultValue="password" required />
         </div>
         <Button type="submit" className="w-full">
           <LogIn className="mr-2 h-4 w-4" /> Login

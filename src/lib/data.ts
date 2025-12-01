@@ -39,12 +39,12 @@ export type User = {
 };
 
 export const users: User[] = [
-  { id: '1', name: 'Alice Johnson', email: 'alice@example.com', role: 'student', memberSince: '2022-08-15', avatarUrl: 'https://picsum.photos/seed/avatar1/200/200', imageHint: 'person portrait', status: 'active' },
-  { id: '2', name: 'Bob Williams', email: 'bob@example.com', role: 'student', memberSince: '2021-09-01', avatarUrl: 'https://picsum.photos/seed/avatar2/200/200', imageHint: 'woman portrait', status: 'active' },
-  { id: '3', name: 'Charlie Brown', email: 'charlie@example.com', role: 'librarian', memberSince: '2020-05-20', avatarUrl: 'https://picsum.photos/seed/avatar3/200/200', imageHint: 'man portrait', status: 'active' },
-  { id: '4', name: 'Diana Prince', email: 'diana@example.com', role: 'admin', memberSince: '2019-01-10', avatarUrl: 'https://picsum.photos/seed/avatar4/200/200', imageHint: 'person glasses', status: 'active' },
-  { id: '5', name: 'Eve Adams', email: 'eve@example.com', role: 'student', memberSince: '2023-02-18', avatarUrl: 'https://picsum.photos/seed/avatar5/200/200', imageHint: 'woman smiling', status: 'inactive' },
-  { id: '6', name: 'Frank Miller', email: 'frank@example.com', role: 'librarian', memberSince: '2022-11-30', avatarUrl: 'https://picsum.photos/seed/avatar6/200/200', imageHint: 'man serious', status: 'active' },
+  { id: '1', name: 'Duru Jesse', email: 'duruarinze2006@gmail.com', role: 'student', memberSince: '2022-08-15', avatarUrl: 'https://picsum.photos/seed/avatar1/200/200', imageHint: 'person portrait', status: 'active' },
+  { id: '2', name: 'Ihenacho Williams', email: 'kamasticlub@gmail.com', role: 'student', memberSince: '2021-09-01', avatarUrl: 'https://picsum.photos/seed/avatar2/200/200', imageHint: 'woman portrait', status: 'active' },
+  { id: '3', name: 'Ogunsamni Seun', email: 'ogseun@gmail.com', role: 'librarian', memberSince: '2020-05-20', avatarUrl: 'https://picsum.photos/seed/avatar3/200/200', imageHint: 'man portrait', status: 'active' },
+  { id: '4', name: 'Jessica Williams', email: 'diana@example.com', role: 'admin', memberSince: '2019-01-10', avatarUrl: 'https://picsum.photos/seed/avatar4/200/200', imageHint: 'person glasses', status: 'active' },
+  { id: '5', name: 'Mark Grasyon', email: 'invicicorp@gmail.com', role: 'student', memberSince: '2023-02-18', avatarUrl: 'https://picsum.photos/seed/avatar5/200/200', imageHint: 'woman smiling', status: 'inactive' },
+  { id: '6', name: 'Frank Ocean', email: 'blonded@gmail.com', role: 'librarian', memberSince: '2022-11-30', avatarUrl: 'https://picsum.photos/seed/avatar6/200/200', imageHint: 'man serious', status: 'active' },
 ];
 
 export type Reservation = {

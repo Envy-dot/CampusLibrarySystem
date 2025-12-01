@@ -51,7 +51,7 @@ export default function BorrowReturnPage() {
                     <h3 className="font-semibold">Checkout Details</h3>
                     {/* Placeholder for user/book info */}
                      <div className="border rounded-lg p-4 bg-muted/50 space-y-2 text-sm">
-                        <p><strong>User:</strong> Alice Johnson (alice@example.com)</p>
+                        <p><strong>User:</strong> Ihenacho Williams (ihewilliams@gmail.com)</p>
                         <p><strong>Book:</strong> The Architect of Knowledge</p>
                         <p className="font-semibold text-primary">Due Date: August 21, 2024</p>
                     </div>
@@ -80,7 +80,7 @@ export default function BorrowReturnPage() {
                     {/* Placeholder for return info */}
                     <div className="border rounded-lg p-4 bg-muted/50 space-y-2 text-sm">
                         <p><strong>Book:</strong> Echoes of the Past</p>
-                        <p><strong>Borrowed By:</strong> Bob Williams (bob@example.com)</p>
+                        <p><strong>Borrowed By:</strong> Duru Jesse (duruarinze2006@gmail.com)</p>
                         <p><strong>Status:</strong> <span className="text-green-600 font-semibold">On Time</span></p>
                     </div>
                 </div>
