@@ -1,3 +1,20 @@
+## Quick start
+1. Install dependencies
+    - npm: `npm install`
+    - yarn: `yarn`
+
+2. Run in development
+    - npm: `npm run dev`
+    - yarn: `yarn dev`
+    Opens a local dev server with hot reload.
+
+3. Build for production
+    - npm: `npm run build`
+    - yarn: `yarn build`
+
+4. Start production server (if needed)
+    - npm: `npm start`
+    - yarn: `yarn start`
 # Getting Started by Duru Jesse
 
 To get started, take a look at `src/app/page.tsx`.
@@ -16,23 +33,7 @@ A minimal Next.js (app router) starter configured to work well with Firebase. In
 - npm or yarn
 - (Optional) Firebase CLI installed: `npm install -g firebase-tools`
 
-## Quick start
-1. Install dependencies
-    - npm: `npm install`
-    - yarn: `yarn`
 
-2. Run in development
-    - npm: `npm run dev`
-    - yarn: `yarn dev`
-    Opens a local dev server with hot reload.
-
-3. Build for production
-    - npm: `npm run build`
-    - yarn: `yarn build`
-
-4. Start production server (if needed)
-    - npm: `npm start`
-    - yarn: `yarn start`
 
 ## Environment
 - Local environment variables can go in `.env.local`. Do not commit secrets.
