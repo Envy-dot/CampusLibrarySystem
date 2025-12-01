@@ -1,3 +1,82 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "book-cover-1",
+      "description": "A vintage book cover with an abstract design.",
+      "imageUrl": "https://images.unsplash.com/photo-1621351183012-e2f9972dd9bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxib29rJTIwY292ZXJ8ZW58MHx8fHwxNzY0NTk1MTk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book cover"
+    },
+    {
+      "id": "book-cover-2",
+      "description": "A modern book cover with a geometric pattern.",
+      "imageUrl": "https://images.unsplash.com/photo-1495567011528-e8ccc9733486?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxib29rJTIwcGF0dGVybnxlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book pattern"
+    },
+    {
+      "id": "book-cover-3",
+      "description": "A minimalist book cover with a single object.",
+      "imageUrl": "https://images.unsplash.com/photo-1600589254066-a3e144f2bbe1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxib29rJTIwbWluaW1hbGlzdHxlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book minimalist"
+    },
+    {
+      "id": "book-cover-4",
+      "description": "A colorful book cover with a fantasy landscape.",
+      "imageUrl": "https://images.unsplash.com/photo-1711185892320-5ca2641b253e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxib29rJTIwZmFudGFzeXxlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book fantasy"
+    },
+    {
+      "id": "book-cover-5",
+      "description": "A photographic book cover showing a cityscape.",
+      "imageUrl": "https://images.unsplash.com/photo-1543534756-83141cc93391?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxib29rJTIwY2l0eXxlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book city"
+    },
+    {
+      "id": "book-cover-6",
+      "description": "An illustrative book cover with a character portrait.",
+      "imageUrl": "https://images.unsplash.com/photo-1757361414072-b7fda8b5bea2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxib29rJTIwaWxsdXN0cmF0aW9ufGVufDB8fHx8MTc2NDYwMzEzMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book illustration"
+    },
+    {
+      "id": "book-cover-7",
+      "description": "A historical book cover with old maps.",
+      "imageUrl": "https://images.unsplash.com/photo-1720253814850-0b81a96f52ff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxib29rJTIwbWFwfGVufDB8fHx8MTc2NDYwMzEzMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book map"
+    },
+    {
+      "id": "book-cover-8",
+      "description": "A science fiction book cover with a spaceship.",
+      "imageUrl": "https://images.unsplash.com/photo-1551600357-faaba97a5b08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxib29rJTIwc3BhY2VzaGlwfGVufDB8fHx8MTc2NDYwMzEzMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book spaceship"
+    },
+    {
+      "id": "book-cover-9",
+      "description": "A thriller book cover with a dark and mysterious theme.",
+      "imageUrl": "https://images.unsplash.com/photo-1566729478121-6e17bae7a2ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxib29rJTIwZGFya3xlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book dark"
+    },
+    {
+      "id": "book-cover-10",
+      "description": "A children's book cover with cute animals.",
+      "imageUrl": "https://images.unsplash.com/photo-1724236283376-19026c64d4d9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxib29rJTIwYW5pbWFsc3xlbnwwfHx8fDE3NjQ2MDMxMzF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "book animals"
+    },
+    {
+      "id": "user-avatar-1",
+      "description": "Avatar for a user.",
+      "imageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjQ1Nzk3MzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person portrait"
+    },
+    {
+      "id": "user-avatar-2",
+      "description": "Avatar for another user.",
+      "imageUrl": "https://images.unsplash.com/photo-1614283233556-f35b0c801ef1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2NDU3Mzc4MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman portrait"
+    },
+    {
+      "id": "landing-hero",
+      "description": "A grand library interior.",
+      "imageUrl": "https://images.unsplash.com/photo-1575438922952-8ebd22b0bc1f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxsaWJyYXJ5JTIwaW50ZXJpb3J8ZW58MHx8fHwxNzY0NTc3MzM0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "library interior"
+    }
+  ]
 }
