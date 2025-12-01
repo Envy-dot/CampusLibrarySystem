@@ -24,7 +24,6 @@ A minimal Next.js (app router) starter configured to work well with Firebase. In
 
 ## Features
 - Next.js (app router) + TypeScript-ready structure
-- Ready for Firebase Hosting / Cloud Functions integration
 - Example entry at `src/app/page.tsx`
 - Simple scripts for dev, build, and start
 
@@ -36,19 +35,16 @@ A minimal Next.js (app router) starter configured to work well with Firebase. In
 
 
 ## Environment
-- Local environment variables can go in `.env.local`. Do not commit secrets.
+- Local environment variables can go in `.env.local`. Do not commit secrets. Secrets will not be committed!
+- Loft Music by The Weeknd is goated 😭
 - If using Firebase services, set your Firebase credentials and project ID in env vars or the Firebase config file.
 
-## Deploying to Firebase
-1. Login and initialize (if not done)
-    - `firebase login`
-    - `firebase init` (choose Hosting or Functions + Hosting)
+
 
 2. Build and deploy
     - `npm run build`
-    - `firebase deploy` (this will deploy your built app per your firebase.json)
 
-Adjust firebase configuration to point at Next.js output or to a server/edge adapter as required by your deployment setup.
+Adjust database configuration to point at Next.js output or to a server/edge adapter as required by your deployment setup.
 
 ## Project structure (common)
 - src/
