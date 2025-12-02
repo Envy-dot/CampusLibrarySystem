@@ -1,6 +1,7 @@
 import 'server-only';
 import { SignJWT, jwtVerify } from 'jose';
 import { cookies } from 'next/headers';
+import { NextRequest } from 'next/server';
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
@@ -37,10 +38,18 @@ export async function createSession(userId: string, userRole: string) {
   });
 }
 
-export async function getSession() {
+// Function to be used in Server Components, Pages, and Route Handlers
+export async function getServerSession() {
   const cookie = cookies().get('session')?.value;
   const session = await decrypt(cookie);
   return session;
+}
+
+// Function to be used in Middleware
+export async function getSessionFromRequest(request: NextRequest) {
+    const cookie = request.cookies.get('session')?.value;
+    const session = await decrypt(cookie);
+    return session;
 }
 
 
@@ -48,10 +57,24 @@ export async function deleteSession() {
   cookies().delete('session');
 }
 
-export async function getServerSession() {
-    const session = await getSession();
-    if (!session) {
+// This function is intended to be called from a client-side context,
+// but it's defined in a server-only module.
+// To use it on the client, you need an API route.
+// We have an API route at `src/app/api/session/route.ts` to expose the session data.
+// We will replace the direct getSession call in client components
+// with a fetch to an API route that securely provides the session.
+export async function getClientSession() {
+    const res = await fetch('/api/session');
+    if (!res.ok) {
+        console.error('Failed to fetch session');
         return null;
     }
-    return session;
+    try {
+        const data = await res.json();
+        // The API route returns { session: { ... } }
+        return data.session;
+    } catch (e) {
+        console.error('Failed to parse session', e);
+        return null;
+    }
 }

@@ -15,7 +15,7 @@ import { User } from "lucide-react";
 import { Logo } from "./logo";
 import { LogoutButton } from "@/components/logout-button";
 import { useEffect, useState } from "react";
-import { getSession } from "@/lib/session";
+import { getClientSession } from "@/lib/session";
 import { Skeleton } from "./ui/skeleton";
 
 
@@ -37,7 +37,7 @@ export function DashboardHeader({userRole}: DashboardHeaderProps) {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const session = await getSession();
+            const session = await getClientSession();
             if (!session?.userId) {
                 setLoading(false);
                 return;
