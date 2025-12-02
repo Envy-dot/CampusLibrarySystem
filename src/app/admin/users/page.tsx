@@ -6,10 +6,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { users } from "@/lib/data";
 import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
 
-export default function UserManagementPage() {
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: 'student' | 'librarian' | 'admin';
+  memberSince: string;
+  avatarUrl: string;
+  imageHint: string;
+  status: 'active' | 'inactive';
+};
+
+async function getUsers(): Promise<User[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error("Failed to fetch users");
+    }
+    return response.json();
+}
+
+export default async function UserManagementPage() {
+  const users = await getUsers();
+  
   return (
     <div className="space-y-8">
       <PageHeader title="User Management" description="View, add, or manage users in the system.">

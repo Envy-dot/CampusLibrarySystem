@@ -2,58 +2,122 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { fines, users, books } from "@/lib/data";
-import { MoreHorizontal, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
+import Image from "next/image";
+import Link from 'next/link';
 
-export default function FineTrackingPage() {
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  publicationYear: number;
+  genre: string;
+  copies: number;
+  available: number;
+  imageUrl: string;
+  description: string;
+  imageHint: string;
+};
+
+async function getBooks(): Promise<Book[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error("Failed to fetch books");
+    }
+    return response.json();
+}
+
+
+export default async function BookInventoryPage() {
+    const books = await getBooks();
+
   return (
     <div className="space-y-8">
-      <PageHeader title="Fine Tracking" description="Monitor and manage all library fines." />
+      <PageHeader title="Book Inventory" description="Manage your library's collection of books.">
+        <Button asChild>
+          <Link href="/librarian/inventory/add">
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Book
+          </Link>
+        </Button>
+      </PageHeader>
+
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input placeholder="Search by user or book..." className="pl-10" />
+            <div className="flex items-center gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input placeholder="Search by title, author, or ISBN..." className="pl-10" />
+                </div>
+                 <Button variant="outline">Filter</Button>
             </div>
-            <Button variant="outline">Filter</Button>
-          </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Book</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Date Issued</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead><span className="sr-only">Actions</span></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {fines.map(fine => {
-                const user = users.find(u => u.id === fine.userId);
-                const book = books.find(b => b.id === fine.bookId);
-                return (
-                  <TableRow key={fine.id}>
-                    <TableCell className="font-medium">{user?.name || 'Unknown User'}</TableCell>
-                    <TableCell>{book?.title || 'Unknown Book'}</TableCell>
-                    <TableCell>${fine.amount.toFixed(2)}</TableCell>
-                    <TableCell>{fine.dateIssued}</TableCell>
-                    <TableCell>
-                      <Badge variant={fine.status === 'paid' ? 'default' : 'destructive'}>{fine.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Button size="icon" variant="ghost"><MoreHorizontal className="h-4 w-4" /></Button>
-                    </TableCell>
-                  </TableRow>
-                )
-              })}
-            </TableBody>
-          </Table>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="hidden w-[100px] sm:table-cell">
+                            <span className="sr-only">Image</span>
+                        </TableHead>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Author</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Stock</TableHead>
+                        <TableHead>
+                            <span className="sr-only">Actions</span>
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {books.map(book => (
+                        <TableRow key={book.id}>
+                            <TableCell className="hidden sm:table-cell">
+                                <Image 
+                                    src={book.imageUrl}
+                                    alt={book.title}
+                                    width={64}
+                                    height={64}
+                                    className="aspect-square rounded-md object-cover"
+                                    data-ai-hint={book.imageHint}
+                                />
+                            </TableCell>
+                            <TableCell className="font-medium">{book.title}</TableCell>
+                            <TableCell>{book.author}</TableCell>
+                            <TableCell>
+                                <Badge variant={book.available > 0 ? "default" : "destructive"} className={cn(book.available > 0 && 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700')}>
+                                    {book.available > 0 ? "Available" : "Checked Out"}
+                                </Badge>
+                            </TableCell>
+                            <TableCell>{book.available} / {book.copies}</TableCell>
+                             <TableCell>
+                                <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                    aria-haspopup="true"
+                                    size="icon"
+                                    variant="ghost"
+                                    >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                    <span className="sr-only">Toggle menu</span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                    <DropdownMenuItem>Edit</DropdownMenuItem>
+                                    <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                                </DropdownMenuContent>
+                                </DropdownMenu>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </CardContent>
       </Card>
     </div>

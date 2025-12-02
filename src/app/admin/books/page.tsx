@@ -5,14 +5,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { books } from "@/lib/data";
-import { cn } from "@/lib/utils";
 import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
 import Image from "next/image";
 import Link from 'next/link';
 
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  publicationYear: number;
+  genre: string;
+  copies: number;
+  available: number;
+  imageUrl: string;
+  description: string;
+  imageHint: string;
+};
+
+async function getBooks(): Promise<Book[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error("Failed to fetch books");
+    }
+    return response.json();
+}
+
 // This is largely the same as the librarian inventory, but in a real app would have more advanced features (e.g. bulk delete, etc.)
-export default function BookManagementPage() {
+export default async function BookManagementPage() {
+  const books = await getBooks();
+
   return (
     <div className="space-y-8">
       <PageHeader title="Book Management" description="Oversee the entire library book catalog.">

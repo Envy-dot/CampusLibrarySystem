@@ -1,13 +1,37 @@
+
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { fines, books } from "@/lib/data";
+import { getServerSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
-export default function FinePaymentsPage() {
-    const userFines = fines.filter(f => f.userId === '1' || f.userId === '2'); // for demo
+type Fine = {
+    id: string;
+    amount: number;
+    reason: string;
+    dateIssued: string;
+    status: 'paid' | 'unpaid';
+    bookTitle: string | null;
+}
+
+async function getFines(userId: string): Promise<Fine[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/fines`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error("Failed to fetch fines");
+    }
+    return response.json();
+}
+
+export default async function FinePaymentsPage() {
+    const session = await getServerSession();
+    if (!session) {
+        redirect('/login');
+    }
+
+    const userFines = await getFines(session.userId as string);
     const unpaidFines = userFines.filter(f => f.status === 'unpaid');
     const totalUnpaid = unpaidFines.reduce((sum, f) => sum + f.amount, 0);
 
@@ -33,14 +57,13 @@ export default function FinePaymentsPage() {
       <div className="space-y-4">
         <h3 className="font-headline text-lg font-semibold">Fine History</h3>
         {userFines.map(fine => {
-            const book = books.find(b => b.id === fine.bookId);
             return(
                 <Card key={fine.id}>
                     <CardHeader>
                         <div className="flex justify-between items-start">
                              <div>
                                 <CardTitle className="text-base">${fine.amount.toFixed(2)} - {fine.reason}</CardTitle>
-                                <CardDescription>For: {book?.title || 'Unknown Book'}</CardDescription>
+                                <CardDescription>For: {fine.bookTitle || 'Unknown Book'}</CardDescription>
                              </div>
                              <Badge variant={fine.status === 'paid' ? 'default' : 'destructive'} className={cn(fine.status === 'paid' && 'bg-green-600')}>
                                 {fine.status}

@@ -1,10 +1,11 @@
+'use client';
+
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Filter, Search, Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { books, Book } from "@/lib/data";
 import {
   Card,
   CardContent,
@@ -14,6 +15,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Define the Book type based on the API response
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  publicationYear: number;
+  genre: string;
+  copies: number;
+  available: number;
+  imageUrl: string;
+  description: string;
+  imageHint: string;
+};
+
 
 function BookCard({ book }: { book: Book }) {
   return (
@@ -49,7 +68,46 @@ function BookCard({ book }: { book: Book }) {
   );
 }
 
+function BookCardSkeleton() {
+  return (
+    <Card className="overflow-hidden h-full flex flex-col">
+      <Skeleton className="w-full aspect-[4/3]" />
+      <CardHeader>
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2 mt-1" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-4 w-1/4" />
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function BookCatalogPage() {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchBooks() {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/books');
+        if (!response.ok) {
+          throw new Error('Failed to fetch books from the database.');
+        }
+        const data = await response.json();
+        setBooks(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchBooks();
+  }, []);
+
   return (
     <div>
       <PageHeader title="Book Catalog" description="Browse and search our collection." />
@@ -65,10 +123,16 @@ export default function BookCatalogPage() {
         </Button>
       </div>
 
+      {error && <p className="text-destructive text-center py-4">{error}</p>}
+      
       <div className="grid grid-cols-2 gap-4">
-        {books.map((book) => (
-          <BookCard key={book.id} book={book} />
-        ))}
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => <BookCardSkeleton key={i} />)
+        ) : (
+          books.map((book) => (
+            <BookCard key={book.id} book={book} />
+          ))
+        )}
       </div>
     </div>
   );

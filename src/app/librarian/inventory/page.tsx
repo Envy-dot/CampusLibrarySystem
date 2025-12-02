@@ -1,17 +1,41 @@
 import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { books } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, PlusCircle, Search } from "lucide-react";
 import Image from "next/image";
 import Link from 'next/link';
 
-export default function BookInventoryPage() {
+type Book = {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  publicationYear: number;
+  genre: string;
+  copies: number;
+  available: number;
+  imageUrl: string;
+  description: string;
+  imageHint: string;
+};
+
+async function getBooks(): Promise<Book[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error("Failed to fetch books");
+    }
+    return response.json();
+}
+
+
+export default async function BookInventoryPage() {
+    const books = await getBooks();
+
   return (
     <div className="space-y-8">
       <PageHeader title="Book Inventory" description="Manage your library's collection of books.">

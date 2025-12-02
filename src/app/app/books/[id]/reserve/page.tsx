@@ -2,14 +2,40 @@ import { PageHeader } from "@/components/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { books } from "@/lib/data";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from 'next/link';
 import { ArrowLeft, Check } from "lucide-react";
+import { Book } from "../../page";
+import { getServerSession } from "@/lib/session";
 
-export default function ReserveBookPage({ params }: { params: { id: string } }) {
-  const book = books.find((b) => b.id === params.id);
+async function getBook(id: string): Promise<Book | null> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books/${id}`, { cache: 'no-store' });
+    if (!response.ok) {
+        if (response.status === 404) {
+            return null;
+        }
+        throw new Error("Failed to fetch book");
+    }
+    return response.json();
+}
+
+async function getUserProfile(userId: string) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/profile`, { cache: 'no-store' });
+    if (!response.ok) return null;
+    return response.json();
+}
+
+export default async function ReserveBookPage({ params }: { params: { id: string } }) {
+  const session = await getServerSession();
+  if (!session?.userId) {
+    redirect('/login');
+  }
+
+  const [book, user] = await Promise.all([
+    getBook(params.id),
+    getUserProfile(session.userId as string)
+  ]);
 
   if (!book) {
     notFound();
@@ -19,6 +45,11 @@ export default function ReserveBookPage({ params }: { params: { id: string } }) 
     // In a real app, you'd show a message. For now, redirect.
     redirect(`/app/books/${params.id}`);
   }
+  
+  // Create a placeholder date for pickup deadline
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() + 2);
+
 
   return (
     <div className="space-y-6">
@@ -53,11 +84,11 @@ export default function ReserveBookPage({ params }: { params: { id: string } }) 
             <h3 className="font-semibold mb-2">Reservation Details</h3>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">User:</span>
-              <span>Alice Johnson (Student)</span>
+              <span>{user?.name} (Student)</span>
             </div>
              <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Pickup Deadline:</span>
-              <span>July 28, 2024, 4:00 PM</span>
+              <span>{deadline.toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' })}</span>
             </div>
           </div>
           <Button size="lg" className="w-full">

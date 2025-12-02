@@ -1,13 +1,27 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, BookCheck, Search, Star } from "lucide-react";
 import Image from 'next/image';
 import Link from 'next/link';
-import { books } from '@/lib/data';
+import { Book } from "./books/page";
 
-export default function MobileHome() {
-    const featuredBooks = books.slice(0, 3);
+
+async function getFeaturedBooks(): Promise<Book[]> {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/books`, { cache: 'no-store' });
+  if (!response.ok) {
+    console.error("Failed to fetch books for homepage");
+    return [];
+  }
+  const allBooks: Book[] = await response.json();
+  // Return the first 3 books as featured, for example
+  return allBooks.slice(0, 3);
+}
+
+export default async function MobileHome() {
+    const featuredBooks = await getFeaturedBooks();
+
   return (
     <div className="space-y-8">
       <div>
@@ -29,6 +43,7 @@ export default function MobileHome() {
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
                 <BookCheck className="h-5 w-5"/>
+                {/* This is still a placeholder, would require another API call */}
                 <span>2 Books Borrowed</span>
             </div>
              <Button variant="secondary" size="sm" asChild>
@@ -69,6 +84,9 @@ export default function MobileHome() {
                     </Card>
                 </Link>
             ))}
+            {featuredBooks.length === 0 && (
+              <p className="text-muted-foreground text-center py-4">Could not load featured books.</p>
+            )}
         </div>
       </div>
     </div>

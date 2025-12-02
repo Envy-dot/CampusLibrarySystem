@@ -1,15 +1,49 @@
 import { PageHeader } from "@/components/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { users } from "@/lib/data";
-import { ArrowRight, Bell, BookCheck, History, LogOut, ShieldCheck, User } from "lucide-react";
+import { getServerSession } from "@/lib/session";
+import { ArrowRight, Bell, History, ShieldCheck, User } from "lucide-react";
 import Link from 'next/link';
+import { LogoutButton } from "@/components/auth/logout-button";
+import { redirect } from "next/navigation";
 
-export default function ProfilePage() {
-    const user = users.find(u => u.id === '1');
-    if (!user) return null;
+type UserProfile = {
+    id: string;
+    name: string;
+    email: string;
+    memberSince: string;
+    avatarUrl: string;
+    imageHint: string;
+    borrowedCount: number;
+    reservedCount: number;
+}
+
+async function getUserProfile(userId: string): Promise<UserProfile | null> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/profile`, { cache: 'no-store' });
+    if (!response.ok) {
+        return null;
+    }
+    return response.json();
+}
+
+
+export default async function ProfilePage() {
+    const session = await getServerSession();
+    if (!session?.userId) {
+        redirect('/login');
+    }
+
+    const user = await getUserProfile(session.userId as string);
+    
+    if (!user) {
+         return (
+            <div className="space-y-6">
+                 <PageHeader title="My Profile" />
+                 <p className="text-muted-foreground text-center">Could not load user profile.</p>
+            </div>
+         )
+    }
 
   return (
     <div className="space-y-6">
@@ -30,11 +64,11 @@ export default function ProfilePage() {
       <Card>
         <CardContent className="p-4 grid grid-cols-2 gap-4 text-center">
             <div>
-                <p className="text-2xl font-bold">3</p>
+                <p className="text-2xl font-bold">{user.borrowedCount}</p>
                 <p className="text-sm text-muted-foreground">Borrowed</p>
             </div>
              <div>
-                <p className="text-2xl font-bold">1</p>
+                <p className="text-2xl font-bold">{user.reservedCount}</p>
                 <p className="text-sm text-muted-foreground">Reserved</p>
             </div>
         </CardContent>
@@ -66,10 +100,9 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
       
-       <Button variant="outline" className="w-full">
-            <LogOut className="mr-2 h-4 w-4"/>
+       <LogoutButton variant="outline" className="w-full">
             Logout
-        </Button>
+        </LogoutButton>
 
     </div>
   );

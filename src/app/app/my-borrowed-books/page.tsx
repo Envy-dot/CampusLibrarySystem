@@ -6,11 +6,37 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { books, borrowedBooks } from "@/lib/data";
+import { getServerSession } from "@/lib/session";
 import { Calendar, CheckCircle, RefreshCw } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default function BorrowedBooksHistoryPage() {
-  const history = borrowedBooks.filter(b => b.userId === '1');
+
+type BorrowedBookHistory = {
+  id: string;
+  bookId: string;
+  userId: string;
+  borrowDate: string;
+  dueDate: string;
+  returnDate: string | null;
+  title: string;
+  author: string;
+};
+
+async function getBorrowingHistory(userId: string): Promise<BorrowedBookHistory[]> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/borrowed-books`, { cache: 'no-store'});
+    if (!response.ok) {
+        throw new Error("Failed to fetch borrowing history");
+    }
+    return response.json();
+}
+
+export default async function BorrowedBooksHistoryPage() {
+  const session = await getServerSession();
+  if (!session) {
+    redirect('/login');
+  }
+
+  const history = await getBorrowingHistory(session.userId as string);
 
   return (
     <div>
@@ -19,14 +45,12 @@ export default function BorrowedBooksHistoryPage() {
         description="A record of all the books you've borrowed."
       />
       <div className="space-y-4">
-        {history.map((item) => {
-          const book = books.find((b) => b.id === item.bookId);
-          if (!book) return null;
-          return (
+        {history.length > 0 ? (
+            history.map((item) => (
             <Card key={item.id}>
               <CardHeader>
-                <CardTitle className="text-base">{book.title}</CardTitle>
-                <CardDescription>{book.author}</CardDescription>
+                <CardTitle className="text-base">{item.title}</CardTitle>
+                <CardDescription>{item.author}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
@@ -50,8 +74,10 @@ export default function BorrowedBooksHistoryPage() {
                 )}
               </CardContent>
             </Card>
-          );
-        })}
+            ))
+        ) : (
+            <p className="text-muted-foreground text-center py-8">You have no borrowing history.</p>
+        )}
       </div>
     </div>
   );
