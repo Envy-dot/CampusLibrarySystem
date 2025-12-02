@@ -4,11 +4,37 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { users } from "@/lib/data";
+import { getServerSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-export default function LibrarianProfilePage() {
-    const user = users.find(u => u.role === 'librarian');
-    if (!user) return null;
+// Re-using the UserProfile type from the student profile page
+type UserProfile = {
+    id: string;
+    name: string;
+    email: string;
+    memberSince: string;
+    avatarUrl: string;
+    imageHint: string;
+}
+
+async function getUserProfile(userId: string): Promise<UserProfile | null> {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/profile`, { cache: 'no-store' });
+    if (!response.ok) {
+        return null;
+    }
+    return response.json();
+}
+
+export default async function LibrarianProfilePage() {
+    const session = await getServerSession();
+    if (!session?.userId) {
+        redirect('/librarian/login');
+    }
+
+    const user = await getUserProfile(session.userId as string);
+    if (!user) {
+        return <p>Could not load profile.</p>
+    }
 
   return (
     <div className="space-y-8">

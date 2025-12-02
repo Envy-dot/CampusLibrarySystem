@@ -11,6 +11,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { pool } from "@/lib/db";
+import { RowDataPacket } from "mysql2";
 
 const recentActivity = [
     { type: 'return', user: 'Alice Johnson', book: 'Echoes of the Past', time: '2m ago' },
@@ -19,7 +21,33 @@ const recentActivity = [
     { type: 'add', book: 'Quantum Entanglement', time: '3h ago' },
 ]
 
-export default function LibrarianDashboard() {
+interface DashboardStats extends RowDataPacket {
+  total_books: number;
+  borrowed_books: number;
+  overdue_books: number;
+  active_members: number;
+}
+
+async function getDashboardStats() {
+    try {
+        const [rows] = await pool.query<DashboardStats[]>(`
+            SELECT
+                (SELECT COUNT(*) FROM books) as total_books,
+                (SELECT COUNT(*) FROM borrowed_books WHERE return_date IS NULL) as borrowed_books,
+                (SELECT COUNT(*) FROM borrowed_books WHERE due_date < CURDATE() AND return_date IS NULL) as overdue_books,
+                (SELECT COUNT(*) FROM users WHERE role = 'student' AND status = 'active') as active_members
+        `);
+        return rows[0];
+    } catch (error) {
+        console.error("Failed to fetch dashboard stats", error);
+        return { total_books: 0, borrowed_books: 0, overdue_books: 0, active_members: 0 };
+    }
+}
+
+
+export default async function LibrarianDashboard() {
+  const stats = await getDashboardStats();
+
   return (
     <div className="space-y-8">
       <PageHeader title="Dashboard" description="Welcome back, Librarian!">
@@ -35,8 +63,8 @@ export default function LibrarianDashboard() {
             <Book className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,254</div>
-            <p className="text-xs text-muted-foreground">+20 since last month</p>
+            <div className="text-2xl font-bold">{stats.total_books}</div>
+            <p className="text-xs text-muted-foreground">in catalog</p>
           </CardContent>
         </Card>
         <Card>
@@ -45,8 +73,8 @@ export default function LibrarianDashboard() {
             <BookCheck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">342</div>
-            <p className="text-xs text-muted-foreground">+52 this week</p>
+            <div className="text-2xl font-bold">{stats.borrowed_books}</div>
+            <p className="text-xs text-muted-foreground">currently checked out</p>
           </CardContent>
         </Card>
         <Card>
@@ -55,7 +83,7 @@ export default function LibrarianDashboard() {
             <BookX className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">12</div>
+            <div className="text-2xl font-bold text-destructive">{stats.overdue_books}</div>
             <p className="text-xs text-muted-foreground">Action required</p>
           </CardContent>
         </Card>
@@ -65,8 +93,8 @@ export default function LibrarianDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">573</div>
-            <p className="text-xs text-muted-foreground">+12 since yesterday</p>
+            <div className="text-2xl font-bold">{stats.active_members}</div>
+            <p className="text-xs text-muted-foreground">student accounts</p>
           </CardContent>
         </Card>
       </div>
@@ -74,7 +102,7 @@ export default function LibrarianDashboard() {
       <Card>
         <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>A log of the latest library events.</CardDescription>
+            <CardDescription>A log of the latest library events. (Placeholder)</CardDescription>
         </CardHeader>
         <CardContent>
             <Table>

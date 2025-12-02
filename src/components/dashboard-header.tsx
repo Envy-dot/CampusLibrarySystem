@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,18 +11,66 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { LogOut, User } from "lucide-react";
+import { User } from "lucide-react";
 import { Logo } from "./logo";
-import { users } from "@/lib/data";
+import { LogoutButton } from "./auth/logout-button";
+import { useEffect, useState } from "react";
+import { getSession } from "@/lib/session";
+import { Skeleton } from "./ui/skeleton";
+
 
 type DashboardHeaderProps = {
     userRole: 'admin' | 'librarian';
 }
 
-export function DashboardHeader({userRole}: DashboardHeaderProps) {
-    const user = users.find(u => u.role === userRole);
+type UserProfile = {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string;
+    imageHint: string;
+}
 
-    if (!user) return null;
+export function DashboardHeader({userRole}: DashboardHeaderProps) {
+    const [user, setUser] = useState<UserProfile | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const session = await getSession();
+            if (!session?.userId) {
+                setLoading(false);
+                return;
+            }
+            // In a real app, you would fetch user data based on the session
+            const response = await fetch(`/api/users/${session.userId}/profile`);
+            if (response.ok) {
+                const profileData = await response.json();
+                setUser(profileData);
+            }
+            setLoading(false);
+        };
+        fetchUser();
+    }, [userRole]);
+
+    if (loading) {
+      return (
+         <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="flex w-full items-center justify-end">
+              <Skeleton className="h-10 w-10 rounded-full" />
+            </div>
+         </header>
+      )
+    }
+
+    if (!user) return (
+       <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+         <div className="md:hidden">
+           <Logo />
+         </div>
+         <SidebarTrigger className="md:hidden" />
+      </header>
+    );
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,10 +103,7 @@ export function DashboardHeader({userRole}: DashboardHeaderProps) {
               <span>Profile</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
+             <LogoutButton variant="ghost" className="w-full justify-start font-normal px-2">Log out</LogoutButton>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
