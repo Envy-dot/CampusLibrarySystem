@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
-import type { BookFromDB } from '../route';
+import { BookFromDB } from '../route';
 
 export async function GET(
   request: Request,
@@ -37,6 +37,6 @@ export async function GET(
     return NextResponse.json(book);
   } catch (error) {
     console.error('Failed to fetch book from database:', error);
-    return NextResponse.json({ error: 'Internal ServerError' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

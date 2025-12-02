@@ -4,7 +4,6 @@ import {
   Book,
   BookUser,
   Gauge,
-  LogOut,
   Receipt,
   User,
 } from "lucide-react";
@@ -20,6 +19,7 @@ import {
 import { Logo } from "../logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 const menuItems = [
   { href: "/librarian", label: "Dashboard", icon: Gauge },
@@ -56,7 +56,7 @@ export function LibrarianSidebarNav() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton icon={<LogOut />}>Logout</SidebarMenuButton>
+            <LogoutButton variant="ghost" className="w-full justify-start">Logout</LogoutButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
