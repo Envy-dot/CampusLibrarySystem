@@ -19,7 +19,7 @@ import {
 import { Logo } from "../logo";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogoutButton } from "@/components/auth/logout-button";
+import { LogoutButton } from "@/components/logout-button";
 
 const menuItems = [
   { href: "/librarian", label: "Dashboard", icon: Gauge },

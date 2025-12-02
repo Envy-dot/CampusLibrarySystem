@@ -13,7 +13,7 @@ import {
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { User } from "lucide-react";
 import { Logo } from "./logo";
-import { LogoutButton } from "@/components/auth/logout-button";
+import { LogoutButton } from "@/components/logout-button";
 import { useEffect, useState } from "react";
 import { getSession } from "@/lib/session";
 import { Skeleton } from "./ui/skeleton";

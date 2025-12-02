@@ -1,3 +1,6 @@
+
+'use client';
+
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,8 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { pool } from "@/lib/db";
-import { RowDataPacket } from "mysql2";
+import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 const recentActivity = [
     { type: 'return', user: 'Alice Johnson', book: 'Echoes of the Past', time: '2m ago' },
@@ -21,32 +25,85 @@ const recentActivity = [
     { type: 'add', book: 'Quantum Entanglement', time: '3h ago' },
 ]
 
-interface DashboardStats extends RowDataPacket {
+type DashboardStats = {
   total_books: number;
   borrowed_books: number;
   overdue_books: number;
   active_members: number;
 }
 
-async function getDashboardStats() {
-    try {
-        const [rows] = await pool.query<DashboardStats[]>(`
-            SELECT
-                (SELECT COUNT(*) FROM books) as total_books,
-                (SELECT COUNT(*) FROM borrowed_books WHERE return_date IS NULL) as borrowed_books,
-                (SELECT COUNT(*) FROM borrowed_books WHERE due_date < CURDATE() AND return_date IS NULL) as overdue_books,
-                (SELECT COUNT(*) FROM users WHERE role = 'student' AND status = 'active') as active_members
-        `);
-        return rows[0];
-    } catch (error) {
-        console.error("Failed to fetch dashboard stats", error);
-        return { total_books: 0, borrowed_books: 0, overdue_books: 0, active_members: 0 };
-    }
+
+function StatsSkeleton() {
+    return (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Books</CardTitle>
+                    <Book className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-8 w-1/2" />
+                    <Skeleton className="h-4 w-1/3 mt-1" />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Books Borrowed</CardTitle>
+                    <BookCheck className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-8 w-1/2" />
+                    <Skeleton className="h-4 w-2/3 mt-1" />
+                </CardContent>
+            </Card>
+            <Card>
+                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Overdue Books</CardTitle>
+                    <BookX className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                     <Skeleton className="h-8 w-1/2" />
+                    <Skeleton className="h-4 w-1/2 mt-1" />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Active Members</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-8 w-1/2" />
+                    <Skeleton className="h-4 w-1/2 mt-1" />
+                </CardContent>
+            </Card>
+        </div>
+    )
 }
 
+export default function LibrarianDashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function LibrarianDashboard() {
-  const stats = await getDashboardStats();
+  useEffect(() => {
+    async function getDashboardStats() {
+        try {
+            setLoading(true);
+            const response = await fetch('/api/librarian/dashboard-stats');
+            if (!response.ok) {
+                throw new Error("Failed to fetch dashboard stats");
+            }
+            const data = await response.json();
+            setStats(data);
+        } catch (error) {
+            console.error(error);
+            // Optionally set an error state here
+        } finally {
+            setLoading(false);
+        }
+    }
+    getDashboardStats();
+  }, []);
+
 
   return (
     <div className="space-y-8">
@@ -56,48 +113,51 @@ export default async function LibrarianDashboard() {
         </Button>
       </PageHeader>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Books</CardTitle>
-            <Book className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.total_books}</div>
-            <p className="text-xs text-muted-foreground">in catalog</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Books Borrowed</CardTitle>
-            <BookCheck className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.borrowed_books}</div>
-            <p className="text-xs text-muted-foreground">currently checked out</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Overdue Books</CardTitle>
-            <BookX className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-destructive">{stats.overdue_books}</div>
-            <p className="text-xs text-muted-foreground">Action required</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.active_members}</div>
-            <p className="text-xs text-muted-foreground">student accounts</p>
-          </CardContent>
-        </Card>
-      </div>
+      {loading || !stats ? <StatsSkeleton /> : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Books</CardTitle>
+                <Book className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.total_books}</div>
+                <p className="text-xs text-muted-foreground">in catalog</p>
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Books Borrowed</CardTitle>
+                <BookCheck className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.borrowed_books}</div>
+                <p className="text-xs text-muted-foreground">currently checked out</p>
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Overdue Books</CardTitle>
+                <BookX className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold text-destructive">{stats.overdue_books}</div>
+                <p className="text-xs text-muted-foreground">Action required</p>
+            </CardContent>
+            </Card>
+            <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Members</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{stats.active_members}</div>
+                <p className="text-xs text-muted-foreground">student accounts</p>
+            </CardContent>
+            </Card>
+        </div>
+      )}
+
 
       <Card>
         <CardHeader>

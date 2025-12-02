@@ -1,12 +1,14 @@
+"use client";
 import { PageHeader } from "@/components/page-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { getServerSession } from "@/lib/session";
+import { getSession } from "@/lib/session";
 import { ArrowRight, Bell, History, ShieldCheck, User } from "lucide-react";
 import Link from 'next/link';
-import { LogoutButton } from "@/components/auth/logout-button";
+import { LogoutButton } from "@/components/logout-button";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type UserProfile = {
     id: string;
@@ -19,22 +21,24 @@ type UserProfile = {
     reservedCount: number;
 }
 
-async function getUserProfile(userId: string): Promise<UserProfile | null> {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users/${userId}/profile`, { cache: 'no-store' });
-    if (!response.ok) {
-        return null;
-    }
-    return response.json();
-}
 
+export default function ProfilePage() {
+    const [user, setUser] = useState<UserProfile | null>(null);
+    
+    useEffect(() => {
+      const fetchProfile = async () => {
+        const session = await getSession();
+        if (!session?.userId) {
+          redirect('/login');
+        }
 
-export default async function ProfilePage() {
-    const session = await getServerSession();
-    if (!session?.userId) {
-        redirect('/login');
-    }
-
-    const user = await getUserProfile(session.userId as string);
+        const response = await fetch(`/api/users/${session.userId}/profile`, { cache: 'no-store' });
+        if (response.ok) {
+          setUser(await response.json());
+        }
+      }
+      fetchProfile();
+    }, []);
     
     if (!user) {
          return (

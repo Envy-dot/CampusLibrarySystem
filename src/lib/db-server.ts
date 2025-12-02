@@ -1,4 +1,4 @@
-'use-server';
+'use server';
 
 import mysql from 'mysql2/promise';
 
